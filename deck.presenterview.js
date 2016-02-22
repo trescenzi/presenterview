@@ -139,6 +139,7 @@ var presenterView = (function() {
             }
             if (nextItem.is('section')) {
                 var html = nextItem[0].innerHTML;
+                html = html.replace(/aria-hidden="true"/g, 'style="visibility: visible"');
                 this.storeNextSlide(html);
             }
 
