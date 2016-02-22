@@ -1,7 +1,9 @@
 /**
 * set interval to read localStorage
 */
-window.setInterval("update()", 200);
+window.addEventListener('storage', function() {
+    update();
+});
 
 var stylesheets = JSON.parse(localStorage.getItem('stylesheets'));
 
@@ -18,6 +20,10 @@ for (var i = 0; i <= stylesheets.length - 1; i++) {
  * updates the notes
  */
 function update() {
-    var note            = document.getElementById('note');
-    note.innerHTML      = localStorage.getItem('notes');
+    var note = document.getElementById('note');
+    note.innerHTML = localStorage.getItem('notes');
 }
+/**
+ * initially run the update
+ */
+update();
