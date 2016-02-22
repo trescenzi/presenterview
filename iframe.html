@@ -14,8 +14,9 @@
     </section>
 </body>
 <script type="text/javascript">
-    // UNBELIEVABLE IMPERFORMANT, NEEDS TO BE REPLACED WITH... IDKY
-    window.setInterval("update()", 2000);
+    window.addEventListener('storage', function() {
+      update();
+    });
 
     // retrieve links to the stylesheets
     var stylesheets = JSON.parse(localStorage.getItem('stylesheets'));
