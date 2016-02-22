@@ -88,13 +88,6 @@ var presenterView = (function() {
         },
         
         /**
-         * Check if the current item is a slide or just a nested element in a slide.
-         */
-        currentItemIsFromTypeSection: function() {
-            return currentItem.is('section');
-        },
-        
-        /**
          * Called to get and store the html commentary of the current slide.
          */
         storeNotes: function() {
@@ -123,6 +116,14 @@ var presenterView = (function() {
         },
 
         /**
+         * sets the current item and its contents
+         */
+        setCurrentItem($element) {
+          currentItem = $element;
+          currentItemsContent = $element[0].innerHTML;
+        },
+
+        /**
          * Runs update logic to update the presenterview page.
          * Called on deck.init and deck.change
          * When the current slide changes, the current item is determined in order to grab its content and extract
@@ -140,6 +141,8 @@ var presenterView = (function() {
             if (nextItem.is('section')) {
                 var html = nextItem[0].innerHTML;
                 html = html.replace(/aria-hidden="true"/g, 'style="visibility: visible"');
+                html = html.replace(/deck-next/g, '');
+                html = html.replace(/deck-after/g, '');
                 this.storeNextSlide(html);
             }
 
