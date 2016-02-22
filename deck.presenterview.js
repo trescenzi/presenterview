@@ -11,26 +11,13 @@ if (window.$ !== undefined) {
         var presenter = window.open(presenterView.viewLocation || presenterView.getLinkToPresenterView(), 
                                     'deck.js - presenterView', 
                                     'width=' + screen.width + ', height=' + screen.height);
+        presenterView.update();
     });
 
-    /**
-    * Note: This event is also triggered when the presentation is loaded!
-    * When the current slide changes, the current item is determined in order to grab its content and extract
-    * the html commentaries. If this slide is a section (what means it's a new slide, not just a nested element), 
-    * we grab the html commentaries and the content and store it in the localSession which gets read by the 
-    * presenterView.
-    */
     $(document).bind('deck.change', function(event, from, to) {
-        presenterView.setCurrentItem(document.getElementById(location.hash.substring(1)));
-
-        if (presenterView.currentItemIsFromTypeSection()) {
-            // prepare
-            presenterView.storeNotes();
-            presenterView.storeNextSlide();
-
-            // write prepared content to localStorage
-            presenterView.write();
-        }
+        // Timeout here is necessary because none of the classes will be updated
+        // till after this event has resolved.
+        setTimeout(presenterView.update.bind(presenterView), 0);
     });
 }
     
@@ -79,18 +66,6 @@ var presenterView = (function() {
         return '';
     };
     
-    /**
-     * Checks if there's a next slide (another section in the markup below the current) and returns
-     * the content if so.
-     */
-    var getNextSlide = function() {
-        if (currentItem.nextElementSibling.nodeName === 'SECTION') {
-            return currentItem.nextElementSibling.innerHTML;
-        } else {
-            return '';
-        }
-    };
-
     // public
     return {
         /**
@@ -116,15 +91,7 @@ var presenterView = (function() {
          * Check if the current item is a slide or just a nested element in a slide.
          */
         currentItemIsFromTypeSection: function() {
-            return currentItem.nodeName === 'SECTION';
-        },
-        
-        /**
-         * Write the current Item (DomNode) to the objects store to do some stuff with it.
-         */
-        setCurrentItem: function(DomNode) {
-            currentItem = DomNode;
-            currentItemsContent = DomNode.innerHTML;
+            return currentItem.is('section');
         },
         
         /**
@@ -137,8 +104,8 @@ var presenterView = (function() {
         /**
          * Called to get and store the html markup of the next slide.
          */
-        storeNextSlide: function() {
-            addItemToLocalStorageArray('next_slide', getNextSlide());
+        storeNextSlide: function(html) {
+            addItemToLocalStorageArray('next_slide', html);
         },
         
         /**
@@ -153,6 +120,29 @@ var presenterView = (function() {
             if (writeToLocalStorage.next_slide !== 'undefined') {
                 localStorage.setItem('next_slide', writeToLocalStorage['next_slide']);
             }
+        },
+
+        /**
+         * Runs update logic to update the presenterview page.
+         * Called on deck.init and deck.change
+         * When the current slide changes, the current item is determined in order to grab its content and extract
+         * the html commentaries. If this slide is a section (what means it's a new slide, not just a nested element), 
+         * we grab the html commentaries and the content and store it in the localSession which gets read by the 
+         * presenterView.
+         */
+        update: function() {
+            presenterView.setCurrentItem($('.deck-current'));
+            var nextItem = $('.deck-next');
+
+            if (currentItem.is('section')) {
+                this.storeNotes();
+            }
+            if (nextItem.is('section')) {
+                var html = nextItem[0].innerHTML;
+                this.storeNextSlide(html);
+            }
+
+            this.write();
         }
     }
 })();
