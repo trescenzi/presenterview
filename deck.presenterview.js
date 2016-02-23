@@ -19,6 +19,14 @@ if (window.$ !== undefined) {
         // till after this event has resolved.
         setTimeout(presenterView.update.bind(presenterView), 0);
     });
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'arrowRight') {
+        $.deck('next');
+      } else if (e.key === 'arrowLeft') {
+        $.deck('prev');
+      }
+    });
 }
     
 /**
@@ -33,7 +41,7 @@ var presenterView = (function() {
     
     /**
      * Creates the link to the presenterView, based on the current location (this is needed because nobody
-     * knows how the very much appreciated user names his presentation).
+     * knows how the very much apspreciated user names his presentation).
      */
     var createLinkToPresenterView = function() {
         var hrefArr        = window.location.href.split('/');
