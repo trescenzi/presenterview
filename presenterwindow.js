@@ -31,7 +31,9 @@ for (var i = 0; i <= stylesheets.length - 1; i++) {
  */
 function update() {
     var note = document.getElementById('note');
-    note.innerHTML = localStorage.getItem('notes');
+    var md = localStorage.getItem('notes');
+    md = md.replace(/\s+\*/g, '\n');
+    note.innerHTML = marked(md);
 }
 /**
  * Increment timer by 1 second
