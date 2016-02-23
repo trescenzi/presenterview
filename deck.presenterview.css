@@ -9,7 +9,7 @@
 }
 
 #note, #next-slide  {
-  height: 100%;
+  height: 90%;
   float: left;
 }
 
@@ -19,4 +19,10 @@
 
 #next-slide {
     width: 60%;
+}
+
+#timer {
+    height: 10%;
+    font-size: 3em;
+    font-weight: bold;
 }
